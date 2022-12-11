@@ -1,22 +1,37 @@
 import { Component } from '@angular/core';
-
+import { FormBuilder } from '@angular/forms';
 import * as XLSX from 'xlsx';
 
 type AOA = any[][];
 
 @Component({
   selector: 'app-sheet',
-   templateUrl: './sheet.component.html',
+  templateUrl: './sheet.component.html',
 })
-
 export class SheetJSComponent {
-  data: AOA = [[1, 2], [3, 4]];
+  data: AOA = [
+    [1, 2],
+    [3, 4],
+  ];
+
   wopts: XLSX.WritingOptions = { bookType: 'xlsx', type: 'array' };
   fileName: string = 'SheetJS.xlsx';
-
+  valueAwal: number = 0;
+  valueAkhir: number = 0;
+  valueSelisih: number = 0;
+  indexData: number = 0;
+  dataKredit: [] = [];
+  dataDebit: [] = [];
+  changeValueAwal(evt: any) {
+    this.valueAwal = evt;
+  }
+  changeValueAkhir(evt: any) {
+    this.valueAkhir = evt;
+    this.valueSelisih = this.valueAkhir - this.valueAwal;
+  }
   onFileChange(evt: any) {
     /* wire up file reader */
-    const target: DataTransfer = <DataTransfer>(evt.target);
+    const target: DataTransfer = <DataTransfer>evt.target;
     if (target.files.length !== 1) throw new Error('Cannot use multiple files');
     const reader: FileReader = new FileReader();
     reader.onload = (e: any) => {
@@ -29,12 +44,27 @@ export class SheetJSComponent {
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
 
       /* save data */
-      this.data = <AOA>(XLSX.utils.sheet_to_json(ws, { header: 1 }));
-      console.log(this.data);
+      this.data = <AOA>XLSX.utils.sheet_to_json(ws, { header: 1 });
+
+      for (
+        this.indexData = 0;
+        this.indexData < this.data.length;
+        this.indexData++
+      ) {
+        let dataTempK = Number(this.data[this.indexData][4]);
+        if (dataTempK && dataTempK <= this.valueSelisih) {
+          this.dataKredit.push(dataTempK);
+        }
+        let dataTempD = Number(this.data[this.indexData][3]);
+        if (dataTempD && dataTempK <= this.valueSelisih) {
+          this.dataDebit.push(dataTempD);
+        }
+      }
+      console.log(this.dataKredit);
+      console.log(this.dataDebit);
     };
     reader.readAsBinaryString(target.files[0]);
   }
-
 
   export(): void {
     /* generate worksheet */
@@ -47,5 +77,4 @@ export class SheetJSComponent {
     /* save to file */
     XLSX.writeFile(wb, this.fileName);
   }
-
 }
