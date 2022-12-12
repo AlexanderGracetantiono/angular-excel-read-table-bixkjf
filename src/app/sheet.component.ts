@@ -29,7 +29,10 @@ export class SheetJSComponent {
   changeValueAkhir(evt: any) {
     this.valueAkhir = evt;
     this.valueSelisih = this.valueAkhir - this.valueAwal;
-    this.valueSelisih = Math.abs(this.valueSelisih);
+    if (this.valueSelisih < 0) {
+      this.valueSelisih = Math.abs(this.valueSelisih);
+      this.isValueNegatif = true;
+    }
   }
   onFileChange(evt: any) {
     /* wire up file reader */
@@ -50,28 +53,33 @@ export class SheetJSComponent {
 
       for (let ii = 0; ii < this.data.length; ii++) {
         let dataTempK = Number(this.data[ii][4]);
-        let dataTempKCode = this.data[ii][3];
+        let dataTempKCode = this.data[ii][2];
         if (dataTempK && dataTempK <= this.valueSelisih) {
           this.dataKredit.push([dataTempKCode, dataTempK]);
         }
         let dataTempD = Number(this.data[ii][3]);
         let dataTempDKode = this.data[ii][2];
-        if (dataTempD && dataTempK <= this.valueSelisih) {
+        if (dataTempD && dataTempD <= this.valueSelisih) {
           this.dataDebit.push([dataTempDKode, dataTempD]);
         }
       }
-      // for (let ii = 0; ii < this.data.length; ii++) {
-      //   let dataTempK = Number(this.data[ii][4]);
-      //   if (dataTempK && dataTempK <= this.valueSelisih) {
-      //     this.dataKredit.push(dataTempK);
-      //   }
-      //   let dataTempD = Number(this.data[ii][3]);
-      //   if (dataTempD && dataTempK <= this.valueSelisih) {
-      //     this.dataDebit.push(dataTempD);
-      //   }
-      // }
-      console.log(this.dataKredit);
-      console.log(this.dataDebit);
+      const dataKreditTempor = this.dataKredit;
+      const dataDebitTempor = this.dataDebit;
+      for (let jj = 0; jj < this.dataKredit.length; jj++) {
+        for (let jjd = 0; jjd < this.dataDebit.length; jjd++) {
+          if (
+            this.dataKredit[jj][0] === this.dataDebit[jjd][0] &&
+            this.dataKredit[jj][1] === this.dataDebit[jjd][1]
+          ) {
+            console.log(this.dataKredit[jj][0]);
+            console.log(this.dataDebit[jjd][0]);
+            dataKreditTempor.splice(jj, 1);
+            dataDebitTempor.splice(jjd, 1);
+          }
+        }
+      }
+      // console.log(this.dataKredit);
+      // console.log(this.dataDebit);
     };
     reader.readAsBinaryString(target.files[0]);
   }
