@@ -22,12 +22,14 @@ export class SheetJSComponent {
   indexData: number = 0;
   dataKredit: [] = [];
   dataDebit: [] = [];
+  isValueNegatif = false;
   changeValueAwal(evt: any) {
     this.valueAwal = evt;
   }
   changeValueAkhir(evt: any) {
     this.valueAkhir = evt;
     this.valueSelisih = this.valueAkhir - this.valueAwal;
+    this.valueSelisih = Math.abs(this.valueSelisih);
   }
   onFileChange(evt: any) {
     /* wire up file reader */
@@ -46,20 +48,28 @@ export class SheetJSComponent {
       /* save data */
       this.data = <AOA>XLSX.utils.sheet_to_json(ws, { header: 1 });
 
-      for (
-        this.indexData = 0;
-        this.indexData < this.data.length;
-        this.indexData++
-      ) {
-        let dataTempK = Number(this.data[this.indexData][4]);
+      for (let ii = 0; ii < this.data.length; ii++) {
+        let dataTempK = Number(this.data[ii][4]);
+        let dataTempKCode = this.data[ii][3];
         if (dataTempK && dataTempK <= this.valueSelisih) {
-          this.dataKredit.push(dataTempK);
+          this.dataKredit.push([dataTempKCode, dataTempK]);
         }
-        let dataTempD = Number(this.data[this.indexData][3]);
+        let dataTempD = Number(this.data[ii][3]);
+        let dataTempDKode = this.data[ii][2];
         if (dataTempD && dataTempK <= this.valueSelisih) {
-          this.dataDebit.push(dataTempD);
+          this.dataDebit.push([dataTempDKode, dataTempD]);
         }
       }
+      // for (let ii = 0; ii < this.data.length; ii++) {
+      //   let dataTempK = Number(this.data[ii][4]);
+      //   if (dataTempK && dataTempK <= this.valueSelisih) {
+      //     this.dataKredit.push(dataTempK);
+      //   }
+      //   let dataTempD = Number(this.data[ii][3]);
+      //   if (dataTempD && dataTempK <= this.valueSelisih) {
+      //     this.dataDebit.push(dataTempD);
+      //   }
+      // }
       console.log(this.dataKredit);
       console.log(this.dataDebit);
     };

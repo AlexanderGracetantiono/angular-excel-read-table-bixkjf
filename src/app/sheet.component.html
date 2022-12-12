@@ -1,19 +1,22 @@
-Masukan total terdata
+Masukan total Internal
 <input type="string" (change)="changeValueAwal($event.target.value)" />
 <br />
-masukan total nasabah
+masukan total External
 <input type="string" (change)="changeValueAkhir($event.target.value)" />
 <br />
 Selish {{ valueSelisih }}
 <br />
 <input type="file" (change)="onFileChange($event)" multiple="false" />
-<!-- <table class="sjs-table">
+<br />
+<br />
+Data Kartu Kredit
+<table class="sjs-table">
   <tbody>
-    <tr *ngFor="let row of data">
+    <tr *ngFor="let row of dataKredit">
       <td *ngFor="let val of row">
         {{ val }}
       </td>
     </tr>
   </tbody>
-</table> -->
-<button (click)="export()">Export!</button>
+</table>
+<!-- <button (click)="export()">Export!</button> -->
